@@ -1,0 +1,51 @@
+﻿@model IEnumerable<Core_ViewBasedAuthorization.Models.Employee>
+@using Microsoft.AspNetCore.Authorization
+<!--View Injection-->
+@inject IAuthorizationService AuthorizationService
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div align="right">
+    <a asp-controller="Account" asp-action="Logout">Logout</a>
+</div>
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.EmpNo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EmpName)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.EmpNo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EmpName)
+            </td>
+            <td>
+                <td>
+                  @if ((await AuthorizationService.AuthorizeAsync(User, "ViewBasedAuthorizationDemo")).Succeeded)
+                    {
+                        <a role="link" href="@Url.Action("Edit", "Employee", new { id = item.EmpNo })">Edit</a>
+                    }
+                </td>
+                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
